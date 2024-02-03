@@ -39,3 +39,4 @@ npm run dev
 npm run build
 ```
 # sql-create-tool
+![project](https://github.com/Richard-master/sql-create-tool/assets/61670905/0abc01d2-54d0-4667-90ed-8db586960100)
