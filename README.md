@@ -39,3 +39,9 @@ npm run dev
 npm run build
 ```
 # sql-create-tool
+![project](https://github.com/Richard-master/sql-create-tool/assets/61670905/0abc01d2-54d0-4667-90ed-8db586960100)
+![sqlcreate](https://github.com/Richard-master/sql-create-tool/assets/61670905/06793e55-89fb-46d1-a1da-9d292bafc3b9)
+![sqlcreate1](https://github.com/Richard-master/sql-create-tool/assets/61670905/46bb2724-a08f-4a0d-a862-d28ce2907319)
+![sqlcreate2](https://github.com/Richard-master/sql-create-tool/assets/61670905/eedc11c6-0049-414b-9e73-3c8336eb71ab)
+
+
