@@ -28,6 +28,11 @@ const items = ref([
   },{
     key: '4',
     icon: () => h(CalendarOutlined),
+    label: '文件合并',
+    title: '文件合并',
+  },{
+    key: '5',
+    icon: () => h(CalendarOutlined),
     label: '更新记录',
     title: '更新记录',
   },
@@ -45,6 +50,9 @@ const handleClick: MenuProps['onClick'] = menuInfo => {
     router.push('/project')
   }
   if (menuInfo.key === '4'){
+    router.push('/sqlcooperation')
+  }
+  if (menuInfo.key === '5'){
     router.push('/updateinfo')
   }
 };
@@ -63,7 +71,7 @@ let navData =  [
     path: "https://javastudy.fun/"
   },{
     name: "代码已开源",
-    path: "/contact"
+    path: "https://github.com/Richard-master/sql-create-tool"
   }
 ]
 let copyright =  '程序员观风'

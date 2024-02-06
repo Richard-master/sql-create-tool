@@ -1,5 +1,6 @@
 <template>
   <div style="padding:0 20px;background: #f8fbf8;min-height: calc(100vh - 85.8px)">
+    <h2>只写中文，即可生成建表语句</h2>
     <a-row :gutter="[20,0]">
       <a-col :span="14">
         <a-card title="参数输入" style="width: 100%">
@@ -54,8 +55,10 @@
                   </a-form-item>
                 </a-space>
               </div>
-              <a-button style="width: 100%" type="dashed" @click="addField(table.formState.index)">添加字段</a-button>
-              <div style="display: flex;justify-content: space-around;margin-top: 20px">
+              <a-button style="width: 100%;margin-bottom: 10px" type="dashed" @click="addField(table.formState.index)">添加字段</a-button>
+              <a-button style="width: 100%" type="dashed" @click="addNormalField(table.formState.index)">添加通用字段
+              </a-button>
+              <div style="display: flex;justify-content: space-around;margin-top: 10px">
                 <a-button style="width: 40%" type="primary" @click="translateAll(table.formState.index)">一键翻译
                 </a-button>
                 <a-button style="width: 40%" type="primary" @click="createTableSQL(table.formState.index)">生成SQL
@@ -110,7 +113,7 @@ export default {
 
 <script setup lang="ts">
 import {reactive, ref} from "vue";
-import {useTranslate} from '@/assets/translate'
+import {useTranslate} from '@/assets/translate.js'
 import {javascript} from "@codemirror/lang-javascript";
 import {oneDark} from "@codemirror/theme-one-dark";
 import {message} from "ant-design-vue";
@@ -118,6 +121,7 @@ import {message} from "ant-design-vue";
 
 const {translate} = useTranslate();
 
+// 表数据
 let tables = reactive([{
   formState: {
     index: 1,
@@ -134,11 +138,17 @@ let tables = reactive([{
     }]
   }
 }])
+// 表折叠面板打开的ID
 const activeKey = ref([1]);
+// SQL生成结果
 let sqlCreate = ref('')
-const code = ref(``);
+
 const extensions = [javascript(), oneDark];
 
+/**
+ * 删除表
+ * @param index 表的key，用户确定删除哪个表
+ */
 const deleteTable = (index: number) => {
   console.log(index)
   tables.splice(
@@ -148,18 +158,33 @@ const deleteTable = (index: number) => {
   );
 }
 
+/**
+ * 删除字段
+ * @param tableIndex 表index
+ * @param fieldIndex 字段index
+ */
 const deleteField = (tableIndex: number, fieldIndex: number) => {
   tables[tableIndex - 1].formState.fields = tables[tableIndex - 1].formState.fields.filter(item => item.index !== fieldIndex)
 }
 
+/**
+ * 一键生成表SQL
+ * @param index 表的index
+ */
 const createTableSQL = (index: number) => {
   sqlCreate.value = generateMySQLStatement(tables[index - 1].formState);
 }
 
+/**
+ * 防止折叠面板事件冒泡
+ */
 const preventInputClick = () => {
 
 }
 
+/**
+ * 复制建表SQL
+ */
 const copySQL = () => {
 // Create a textarea element to hold the text to copy
   const textarea = document.createElement('textarea');
@@ -175,6 +200,10 @@ const copySQL = () => {
   message.success("复制成功")
 }
 
+/**
+ * 创建SQL
+ * @param formState 表信息
+ */
 const generateMySQLStatement = (formState: any) => {
   const {tableEnglishName, tableName, fields} = formState;
   // Create table statement
@@ -214,17 +243,24 @@ const generateMySQLStatement = (formState: any) => {
   return sqlStatement;
 }
 
-const translateAll = (index: number) => {
+/**
+ * 一键翻译
+ * @param index 表的index
+ */
+const translateAll = async (index: number) => {
   // 如果没有被翻译，才进行翻译，否则不翻译（为了节省资源）
   if (tables[index - 1].formState.tableEnglishName === '') {
     translateTableName(index, tables[index - 1].formState.tableName)
   }
-  tables[index - 1].formState.fields.forEach(item => {
+  for (const item of tables[index - 1].formState.fields) {
     if (item.fieldName === '') {
       translateFieldName(index, item.index, item.fieldChineseName)
+      await delay(300); // 等待0.3秒
     }
-  })
+  }
 }
+
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
  * 添加表
@@ -249,8 +285,11 @@ const addTable = () => {
   })
 }
 
+/**
+ * 给表添加字段
+ * @param index 表的index
+ */
 const addField = (index: number) => {
-  console.log(index)
   tables[index - 1].formState.fields.push({
     index: tables[index - 1].formState.fields[tables[index - 1].formState.fields.length - 1].index + 1,
     fieldName: '',
@@ -262,6 +301,45 @@ const addField = (index: number) => {
   })
 }
 
+/**
+ * 给表添加通用字段
+ * @param index 表的index
+ */
+const addNormalField = (index: number) => {
+  tables[index - 1].formState.fields.push({
+        index: tables[index - 1].formState.fields[tables[index - 1].formState.fields.length - 1].index + 1,
+        fieldName: 'create_time',
+        fieldChineseName: '创建时间',
+        fieldStyle: 'datetime',
+        notNull: false,
+        primaryKey: false,
+        autoIncrement: false
+      },
+      {
+        index: tables[index - 1].formState.fields[tables[index - 1].formState.fields.length - 1].index + 1,
+        fieldName: 'update_time',
+        fieldChineseName: '更新时间',
+        fieldStyle: 'datetime',
+        notNull: false,
+        primaryKey: false,
+        autoIncrement: false
+      },
+      {
+        index: tables[index - 1].formState.fields[tables[index - 1].formState.fields.length - 1].index + 1,
+        fieldName: 'is_deleted',
+        fieldChineseName: '是否删除',
+        fieldStyle: 'char(1)',
+        notNull: false,
+        primaryKey: false,
+        autoIncrement: false
+      })
+}
+
+/**
+ * 翻译表名
+ * @param index 表的index
+ * @param query 表的注释
+ */
 function translateTableName(index: number, query: string) {
   translate(query).then(result => {
     console.log(result);
@@ -273,7 +351,13 @@ function translateTableName(index: number, query: string) {
   });
 }
 
-// 翻译
+
+/**
+ * 翻译字段名
+ * @param tableIndex 表的index
+ * @param index 字段的index
+ * @param query 字段的注释
+ */
 const translateFieldName = (tableIndex: number, index: number, query: string) => {
   translate(query).then(result => {
     console.log(result);

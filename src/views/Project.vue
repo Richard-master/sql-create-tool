@@ -31,7 +31,7 @@
 </template>
 <script setup lang="ts">
 import {useRouter} from "vue-router";
-import {useTranslate} from '@/assets/translate'
+import {useTranslate} from '@/assets/translate.js'
 const {translate}  = useTranslate();
 const router = useRouter()
 let dataSource = [
@@ -76,7 +76,7 @@ const toTable = () => {
  * @param query 项目名称
  */
 const translateDatabaseName = (key:number,query:string) => {
-  translate(query).then(result => {
+  translate(query).then((result:any) => {
     console.log(result);
     if (typeof result === "string") {
       let outputString = ''
@@ -91,7 +91,7 @@ const translateDatabaseName = (key:number,query:string) => {
       console.log(outputString)
       dataSource[key-1].databaseName = outputString
     }
-  }).catch(error => {
+  }).catch((error:any) => {
     console.error(error);
   });
 }

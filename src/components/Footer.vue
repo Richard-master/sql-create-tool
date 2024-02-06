@@ -26,47 +26,35 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "Footer1",
-  data() {
-    return {
-      showQR: true // 控制是否显示微信二维码
-    }
-  },
-  props: {
-    navigation: {
-      type: Array,
-      default: function () {
-        return []
-      },
-      required: true
-    },
-    copyright: {
-      type: String,
-      default: function () {
-        return ""
-      },
-      required: true
-    }
-  },
-  methods: {
-    showQRCode() {
-      this.showQR = true;
-    },
-    hideQRCode() {
-      this.showQR = false;
-    },
-    routerTo(path) {
-      this.navigation.forEach(item => {
-        if (item.path == path) {
-          item.active = true
-        } else
-          item.active = false
-      })
-      this.$router.replace(path).catch(err => err)
-    }
-  }
+<script setup lang="ts">
+import {ref} from "vue";
+import {useRouter} from "vue-router";
+const router = useRouter()
+
+const props = defineProps({
+  navigation: Array,
+  copyright: String
+})
+
+const { navigation, copyright } = props;
+
+let showQR = ref(true) // 控制是否显示微信二维码
+
+const showQRCode = () => {
+  showQR.value = true;
+}
+const hideQRCode = () => {
+  showQR.value = false;
+}
+const routerTo = (path: string) =>
+{
+  navigation.forEach((item: any) => {
+    if (item.path == path) {
+      item.active = true
+    } else
+      item.active = false
+  })
+  router.replace(path).catch(err => err)
 }
 </script>
 

@@ -1,5 +1,5 @@
 import {reactive, ref} from "vue";
-import {useMD5} from '@/assets/MD5'
+import {useMD5} from '@/assets/MD5.js'
 import axios from 'axios';
 import axiosJsonp from 'axios-jsonp';
 
